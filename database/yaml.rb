@@ -16,7 +16,17 @@ module Database
     # end
 
     def products
-      YAML.safe_load(File.read(DATABASE_FILE))[:products]
+      load_data[:products]
+    end
+
+    def find_product(id)
+      load_data[:products].detect { |product| product[:id] == id }
+    end
+
+    private
+
+    def load_data
+      @load_data ||= YAML.safe_load(File.read(DATABASE_FILE), permitted_classes: [Symbol])
     end
   end
 end

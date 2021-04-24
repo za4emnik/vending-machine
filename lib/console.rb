@@ -1,28 +1,38 @@
-require './database/yaml'
+require './database/adapter'
 require './lib/vending_machine'
+require './lib/validation'
 
 module Lib
   class Console
+    include Validation
+
     attr_reader :database
 
     def initialize
       @machine = VendingMachine.new
-      @database = Database::Yaml.new
+      @database = Database::Adapter.instance.adapter
     end
 
     def run
       show_products
+      choose_product
     end
 
-    def show_products
-      puts 'There are the list of aviliable products:'
+    private
 
-      database.products.each do |product|
-        puts product[:id]
-        puts product[:name]
-        puts product[:price]
-        puts product[:count]
-      end
+    def show_products
+      headings = ['Number of product', 'Name', 'Price', 'Quantity']
+      title = 'There are the list of aviliable products:'
+      rows = database.products.map(&:values)
+
+      puts Terminal::Table.new title: title, headings: headings, rows: rows
+    end
+
+    def choose_product
+      puts 'Type the number of product, please.'
+      @choosed_product = gets.chomp
+
+      validate_choose @choosed_product
     end
   end
 end
