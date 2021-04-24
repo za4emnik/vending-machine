@@ -1,0 +1,14 @@
+---
+:products:
+- :id: 1
+  :name: one
+  :price: 100
+  :count: 5
+- :id: 2
+  :name: two
+  :price: 200
+  :count: 10
+- :id: 3
+  :name: three
+  :price: 300
+  :count: 15
