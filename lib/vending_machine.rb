@@ -1,10 +1,11 @@
 require './database/adapter'
+require './lib/validation'
 
 module Lib
   class VendingMachine
     ALLOWED_COINS = [0.25, 0.5, 1, 2, 3, 5].freeze
 
-    attr_accessor :product_id, :money
+    attr_accessor :product_id, :customer_money
     attr_reader :database, :errors
 
     def initialize
@@ -12,29 +13,27 @@ module Lib
       @validation = Lib::Validation.new
     end
 
-    def pay
-      charge
-      return_product
+    def buy
+      return false unless enough_funds?
+
+      decrease_product_quantity
+      true
     end
+
+    def odd_money; end
 
     private
 
-    def charge
-      validate_amount(money, product)
-      update_product_quantity
+    def enough_funds?
+      @validation.validate_amount(money, product)
     end
 
-    # def choose_product
-    #   puts 'Type the number of product, please.'
-    #   validate = validate_choose(@choosed_product = gets.chomp)
-
-    #   raise validate if validate
-    # end
+    def decrease_product_quantity
+      database.decrease_product_quantity(product)
+    end
 
     def product
-      @product =|| database.find_product(product_id.to_i)
+      @product ||= database.find_product(product_id.to_i)
     end
-
-    def return_product; end
   end
 end

@@ -12,6 +12,6 @@ RSpec::Matchers.define :have_attr_reader do |field|
   end
 
   description do
-    "checks to see if there is an attr reader on the supplied object"
+    'checks to see if there is an attr reader on the supplied object'
   end
 end

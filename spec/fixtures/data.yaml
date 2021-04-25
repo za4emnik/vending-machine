@@ -3,12 +3,12 @@
 - :id: 1
   :name: one
   :price: 100
-  :count: 5
+  :quantity: 993
 - :id: 2
   :name: two
   :price: 200
-  :count: 10
+  :quantity: 1000
 - :id: 3
   :name: three
   :price: 300
-  :count: 15
+  :quantity: 1000

@@ -4,6 +4,12 @@ require './lib/validation'
 RSpec.describe Lib::Validation do
   subject(:validation) { described_class.new }
 
+  describe '#initialize' do
+    it 'initialize error with empty array' do
+      expect(validation.errors).to eq([])
+    end
+  end
+
   describe '#validate_choose' do
     before { validation.validate_choose(choose) }
 
@@ -29,7 +35,7 @@ RSpec.describe Lib::Validation do
   describe '#validate_amount' do
     before { validation.validate_amount(amount, product) }
 
-    let(:product) { { amount: 10 } }
+    let(:product) { { price: 10 } }
 
     context 'when amount is less than product price' do
       let(:amount) { 1 }

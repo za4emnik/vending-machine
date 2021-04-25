@@ -26,4 +26,15 @@ RSpec.describe Database::Yaml do
       it { expect(database.find_product(100)).to eq({}) }
     end
   end
+
+  describe '#decrease_product_quantity' do
+    let!(:product_quantity) { product[:quantity] }
+    let(:product) { database.find_product(product_id) }
+    let(:product_id) { 1 }
+
+    it 'decrease product quantity by 1' do
+      database.decrease_product_quantity(product)
+      expect(database.find_product(product_id)[:quantity]).to eq(product_quantity - 1)
+    end
+  end
 end
