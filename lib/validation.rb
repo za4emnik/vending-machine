@@ -1,16 +1,30 @@
 require './database/adapter'
 
 module Lib
-  module Validation
-    def validate_choose(choose)
-      return 'You can to type only number of the product.' if choose.to_i.zero?
-      return 'Selected product do not exist. Please, try again.' unless product_found?(choose)
+  class Validation
+    attr_reader :errors
+
+    def initialize
+      @errors = []
+    end
+
+    def validate_choose(product_id)
+      add_error('You can to type only number of the product.') if product_id.to_i.zero?
+      add_error('Selected product do not exist. Please, try again.') if product(product_id).empty?
+    end
+
+    def validate_amount(amount, product)
+      add_error('Insufficient funds.') if amount < product[:amount]
     end
 
     private
 
-    def product_found?(choose)
-      !Database::Adapter.instance.adapter.find_product(choose.to_i).empty?
+    def product(product_id)
+      Database::Adapter.instance.adapter.find_product(product_id.to_i)
+    end
+
+    def add_error(message)
+      @errors << message
     end
   end
 end
