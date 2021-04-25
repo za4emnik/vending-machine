@@ -20,7 +20,7 @@ module Database
     end
 
     def find_product(id)
-      load_data[:products].detect { |product| product[:id] == id }
+      load_data[:products].detect { |product| product[:id] == id } || {}
     end
 
     private

@@ -6,7 +6,7 @@ module Lib
   class Console
     include Validation
 
-    attr_reader :database
+    attr_reader :database, :machine
 
     def initialize
       @machine = VendingMachine.new
@@ -30,9 +30,9 @@ module Lib
 
     def choose_product
       puts 'Type the number of product, please.'
-      @choosed_product = gets.chomp
+      validate = validate_choose(@choosed_product = gets.chomp)
 
-      validate_choose @choosed_product
+      raise validate if validate
     end
   end
 end

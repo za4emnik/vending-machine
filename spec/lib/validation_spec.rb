@@ -2,21 +2,27 @@ require 'spec_helper'
 require './lib/validation'
 
 RSpec.describe Lib::Validation do
-  subject(:validation) { Class.new { extend Lib::Validation } }
+  subject(:extended_validation) { Class.new { extend Lib::Validation } }
 
   describe '#validate_choose' do
+    subject(:validation) { extended_validation.validate_choose(choose) }
+
     context 'when choose is not a number' do
       let(:choose) { 'abc' }
 
-      it { expect { validation.validate_choose(choose) }.to raise_error }
+      it_behaves_like 'returns validation error'
     end
 
     context 'when product is not found' do
       let(:choose) { 100 }
 
-      it 'returns error string' do
-        expect(validation.validate_choose(choose)).to be_a(String)
-      end
+      it_behaves_like 'returns validation error'
+    end
+
+    context 'when choose is correct' do
+      let(:choose) { 1 }
+
+      it { expect(validation).to be_nil }
     end
   end
 end

@@ -23,7 +23,7 @@ RSpec.describe Database::Yaml do
     end
 
     context 'when product not exists in the database' do
-      it { expect(database.find_product(100)).to be_nil }
+      it { expect(database.find_product(100)).to eq({}) }
     end
   end
 end
