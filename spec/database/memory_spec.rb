@@ -5,7 +5,7 @@ RSpec.describe Database::Memory do
   subject(:database) { described_class.new }
 
   let(:products) { database.instance_variable_get(:@data)[:products] }
-  
+
   describe '#products' do
     it 'returns full list of products' do
       expect(database.products.count).to eq(products.count)
@@ -24,19 +24,29 @@ RSpec.describe Database::Memory do
     end
   end
 
-  describe '#balance' do
+  describe '#funds' do
     it 'returns odd money' do
-      expect(database.balance).to eq(described_class::DATA[:balance])
+      expect(database.funds).to eq(described_class::DATA[:funds])
     end
   end
 
   describe '#add_coin' do
     let(:coin) { '0.5' }
-    let!(:odd_coin) { database.balance[coin.to_f] }
+    let!(:funds_coin) { database.funds[coin.to_f] }
 
     it 'increase coin count' do
       database.add_coin(coin)
-      expect(database.balance[coin.to_f]).to eq(odd_coin + 1)
+      expect(database.funds[coin.to_f]).to eq(funds_coin + 1)
+    end
+  end
+
+  describe '#drop_coin' do
+    let(:coin) { '0.5' }
+    let!(:funds_coin) { database.funds[coin.to_f] }
+
+    it 'increase coin count' do
+      database.drop_coin(coin)
+      expect(database.funds[coin.to_f]).to eq(funds_coin - 1)
     end
   end
 

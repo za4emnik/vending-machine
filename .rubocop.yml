@@ -7,3 +7,16 @@ Style/FrozenStringLiteralComment:
 
 Style/Documentation:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/MethodLength:
+  Exclude:
+    - spec/support/helpers/data_helper.rb
+    - lib/console.rb
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - spec/support/helpers/data_helper.rb

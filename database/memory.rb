@@ -1,13 +1,12 @@
 module Database
   class Memory
-
     DATA = {
       products: [
-        { id: 1, name: 'one', price: 100, quantity: 5 },
-        { id: 2, name: 'two', price: 200, quantity: 10 },
-        { id: 3, name: 'three', price: 300, quantity: 15 }
+        { id: 1, name: 'one', price: 5, quantity: 3 },
+        { id: 2, name: 'two', price: 3, quantity: 5 },
+        { id: 3, name: 'three', price: 0.5, quantity: 10 }
       ],
-      balance: {
+      funds: {
         0.25 => 10,
         0.5 => 10,
         1.0 => 10,
@@ -26,15 +25,19 @@ module Database
     end
 
     def find_product(id)
-      @data[:products].detect { |product| product[:id] == id } || {}
+      @data[:products].detect { |product| product[:id] == id.to_i } || {}
     end
 
-    def balance
-      @data[:balance]
+    def funds
+      @data[:funds]
     end
 
     def add_coin(coin)
-      @data[:balance][coin.to_f] += 1
+      @data[:funds][coin.to_f] += 1
+    end
+
+    def drop_coin(coin)
+      @data[:funds][coin.to_f] -= 1
     end
 
     def decrease_product_quantity(product)

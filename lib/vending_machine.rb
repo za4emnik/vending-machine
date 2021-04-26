@@ -5,50 +5,82 @@ module Lib
   class VendingMachine
     include Validation
 
-    FUNDS = {
-      0.25 => 0,
-      0.5 => 0,
-      1.0 => 0,
-      2.0 => 0,
-      3.0 => 0,
-      5.0 => 0
-    }.freeze
-
-    attr_accessor :product_id
-    attr_reader :rest, :database
+    attr_reader :database, :balance
 
     def initialize
       @database = Database::Adapter.instance.adapter
-      @funds = FUNDS.dup
+      @balance = 0.0
+      initialize_rest
     end
-    
-    def add_funds(coin)
+
+    def select_product(product_id)
+      select_product = database.find_product(product_id)
+      validate_selected_product(select_product)
+
+      @product_id = product_id
+    end
+
+    def add_coin(coin)
       validate_coin(coin)
 
-      @funds[coin.to_f] += 1
+      @balance += coin.to_f
       database.add_coin(coin)
     end
 
-    def funds
-      @funds.inject(&:+)
+    def buy
+      validate_purchase(balance, product)
+
+      database.decrease_product_quantity(product)
+      @balance -= product[:price]
+      product
     end
-    
-    def rest
-      1
+
+    def give_rest
+      calculate_rest
+      remove_selected_product
+      old_rest = @rest
+      initialize_rest
+
+      old_rest
+    end
+
+    def product
+      database.find_product(product_id)
     end
 
     private
 
-    def enough_funds?
-      @validation.validate_amount(money, product)
+    attr_reader :product_id
+
+    def remove_selected_product
+      @product_id = nil
     end
 
-    # def decrease_product_quantity
-    #   database.decrease_product_quantity(product)
-    # end
+    def calculate_rest
+      @balance = @rest.reduce(balance) do |acc, (coin, _amount)|
+        coins_count = (acc / coin).to_i
+        next acc unless coins_count.positive?
 
-    def product
-      @product ||= database.find_product(product_id.to_i)
+        throw_coins(coins_count, coin, acc)
+      end
+    end
+
+    def throw_coins(coins_count, coin, acc)
+      funds = database.funds
+
+      coins_count.times do
+        break unless funds[coin].positive?
+
+        database.drop_coin(coin)
+        @rest[coin] += 1
+        acc -= coin
+      end
+
+      acc
+    end
+
+    def initialize_rest
+      @rest = Validation::ALLOWED_COINS.sort.reverse.map { |coin| { coin => 0 } }.inject(:merge)
     end
   end
 end
