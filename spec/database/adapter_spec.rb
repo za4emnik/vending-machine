@@ -1,13 +1,13 @@
 require 'spec_helper'
 require './database/adapter'
-require './database/yaml'
+require './database/memory'
 
 RSpec.describe Database::Adapter do
   subject(:adapter) { described_class.instance.adapter }
 
   describe '#adapter' do
-    it 'returns default yaml adapter' do
-      expect(adapter).to be_a(Database::Yaml)
+    it 'returns default memory adapter' do
+      expect(adapter).to be_a(Database::Memory)
     end
 
     it 'can not create new object' do

@@ -1,1 +1,1 @@
-data_adapter: :yaml
+data_adapter: :memory

@@ -1,5 +1,5 @@
 require 'singleton'
-require './database/yaml'
+require './database/memory'
 
 module Database
   class Adapter
