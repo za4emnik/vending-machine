@@ -51,7 +51,6 @@ module Lib
     end
 
     def buy
-      clear_screen
       perform_action do
         machine.buy
         puts "Take your product, please - #{machine.product[:name]}"
@@ -59,7 +58,6 @@ module Lib
     end
 
     def change
-      clear_screen
       perform_action do
         puts 'Get your change, please.'
 
@@ -82,6 +80,8 @@ module Lib
         buy
       when '4'
         change
+      when '5'
+        raise SystemExit
       end
     end
 

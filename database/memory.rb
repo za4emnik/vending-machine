@@ -2,9 +2,9 @@ module Database
   class Memory
     DATA = {
       products: [
-        { id: 1, name: 'one', price: 5, quantity: 3 },
-        { id: 2, name: 'two', price: 3, quantity: 5 },
-        { id: 3, name: 'three', price: 0.5, quantity: 10 }
+        { id: 1, name: 'Bottle of water.', price: 1.25, quantity: 3 },
+        { id: 2, name: 'The juice', price: 3.75, quantity: 5 },
+        { id: 3, name: 'Beer', price: 7.50, quantity: 10 }
       ],
       funds: {
         0.25 => 10,
@@ -42,7 +42,7 @@ module Database
 
     def decrease_product_quantity(product)
       @data[:products].map do |product_item|
-        product_item[:quantity] = product_item[:quantity] - 1 if product_item[:id] == product[:id]
+        product_item[:quantity] -= 1 if product_item[:id] == product[:id]
         product_item
       end
     end

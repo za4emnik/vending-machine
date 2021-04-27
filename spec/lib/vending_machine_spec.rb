@@ -111,8 +111,9 @@ RSpec.describe Lib::VendingMachine do
       end
 
       it 'decrease balance' do
+        balance = machine.balance
         machine.buy
-        expect(machine.balance).to eq(3)
+        expect(machine.balance).to eq(balance - product[:price])
       end
     end
   end
