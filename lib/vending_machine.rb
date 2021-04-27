@@ -35,7 +35,7 @@ module Lib
       product
     end
 
-    def give_rest
+    def odd_money
       calculate_rest
       remove_selected_product
       old_rest = @rest

@@ -9,25 +9,50 @@ RSpec.describe Lib::VendingMachine do
 
   let(:product_id) { 1 }
 
-  describe 'constants' do
-    it 'ALLOWED_COINS has only permitted values' do
-      expect(described_class::ALLOWED_COINS).to eq([0.25, 0.5, 1, 2, 3, 5])
-    end
-  end
-
   describe 'accessors' do
-    # it 'has money attribute accessor' do
-    #   expect(machine).to have_attr_accessor(:money)
-    # end
+    it 'has database attribute reader' do
+      expect(machine).to have_attr_reader(:database)
+    end
 
-    # it 'has database attribute reader' do
-    #   expect(machine).to have_attr_reader(:database)
-    # end
+    it 'has balance attribute reader' do
+      expect(machine).to have_attr_reader(:balance)
+    end
   end
 
   describe '#initialize' do
     it 'has database kind of default database Memory adapter' do
       expect(machine.database).to be_a(Database::Memory)
+    end
+
+    it 'initialize zero balance' do
+      expect(machine.instance_variable_get(:@balance)).to eq(0.0)
+    end
+
+    it 'initialize rest values' do
+      expected_result = Lib::Validation::ALLOWED_COINS.sort.reverse.map { |coin| { coin => 0 } }.inject(:merge)
+      expect(machine.instance_variable_get(:@rest)).to eq(expected_result)
+    end
+  end
+
+  describe '#select_product' do
+    context 'when selected product is valid' do
+      before { machine.select_product(1) }
+
+      it 'do not raise validation error' do
+        expect(machine.instance_variable_get(:@product_id)).to eq(1)
+      end
+    end
+
+    context 'when selected product is not valid' do
+      it 'raise validation error' do
+        expect { machine.select_product(555) }.to raise_error(Lib::MachineError)
+      end
+
+      it 'do not set product_id to machine' do
+        machine.select_product(555)
+      rescue Lib::MachineError
+        expect(machine.instance_variable_get(:@product_id)).to be_nil
+      end
     end
   end
 
@@ -50,28 +75,6 @@ RSpec.describe Lib::VendingMachine do
 
       it 'adds coin to the machine funds' do
         expect(machine.database.funds[coin.to_f]).to eq(funds + 1)
-      end
-    end
-  end
-
-  describe '#select_product' do
-    context 'when selected product is valid' do
-      before { machine.select_product(1) }
-
-      it 'do not raise validation error' do
-        expect(machine.instance_variable_get(:@product_id)).to eq(1)
-      end
-    end
-
-    context 'when selected product is not valid' do
-      it 'raise validation error' do
-        expect { machine.select_product(555) }.to raise_error(Lib::MachineError)
-      end
-
-      it 'do not set product_id to machine' do
-        machine.select_product(555)
-      rescue Lib::MachineError
-        expect(machine.instance_variable_get(:@product_id)).to be_nil
       end
     end
   end
@@ -114,7 +117,7 @@ RSpec.describe Lib::VendingMachine do
     end
   end
 
-  describe 'give_rest' do
+  describe '#odd_money' do
     context 'when enough coins in machine' do
       before do
         stub_const('Database::Memory::DATA', funds(zero_balance: true))
@@ -130,7 +133,7 @@ RSpec.describe Lib::VendingMachine do
       let(:expected_result) { { 5.0 => 1, 3.0 => 1, 2.0 => 1, 1.0 => 1, 0.5 => 1, 0.25 => 1 } }
 
       it 'returns rest' do
-        expect(machine.give_rest).to eq(expected_result)
+        expect(machine.odd_money).to eq(expected_result)
       end
     end
 
@@ -149,17 +152,17 @@ RSpec.describe Lib::VendingMachine do
       let(:expected_result) { { 5.0 => 1, 3.0 => 0, 2.0 => 0, 1.0 => 0, 0.5 => 10, 0.25 => 0 } }
 
       it 'returns several 0.5 coins' do
-        expect(machine.give_rest).to eq(expected_result)
+        expect(machine.odd_money).to eq(expected_result)
       end
 
       it 'save the rest to balance' do
-        machine.give_rest
+        machine.odd_money
         expect(machine.balance).to eq(1.25)
       end
     end
 
     it 'remove selected product' do
-      machine.give_rest
+      machine.odd_money
       expect(machine.product).to eq({})
     end
   end

@@ -63,7 +63,7 @@ module Lib
       perform_action do
         puts 'Get your change, please.'
 
-        machine.give_rest.each do |coin, value|
+        machine.odd_money.each do |coin, value|
           puts "#{coin} - #{value}"
         end
       end

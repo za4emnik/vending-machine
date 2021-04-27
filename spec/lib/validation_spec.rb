@@ -7,6 +7,12 @@ RSpec.describe Lib::Validation do
 
   let(:database) { Database::Adapter.instance.adapter }
 
+  describe 'constants' do
+    it 'ALLOWED_COINS has only permitted values' do
+      expect(described_class::ALLOWED_COINS).to eq([0.25, 0.5, 1, 2, 3, 5])
+    end
+  end
+
   describe '#validate_selected_product' do
     subject(:validation) { extended_validation.validate_selected_product(product) }
 
